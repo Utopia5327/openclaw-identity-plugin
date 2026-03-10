@@ -28,7 +28,7 @@ export class DIDManager {
     }
 
     private async generateKey() {
-        const { publicKey, privateKey } = await generateKeyPair('EdDSA', { crv: 'Ed25519' });
+        const { publicKey, privateKey } = await generateKeyPair('EdDSA', { crv: 'Ed25519', extractable: true });
         this.privateKeyJWK = await exportJWK(privateKey);
         this.publicKeyJWK = await exportJWK(publicKey);
         this.saveKey();
@@ -43,7 +43,7 @@ export class DIDManager {
         const cipher = crypto.createCipheriv('aes-256-gcm', getCryptoKey(), iv);
         const encrypted = Buffer.concat([cipher.update(payload, 'utf8'), cipher.final()]);
         const authTag = cipher.getAuthTag();
-        
+
         fs.writeFileSync(KEY_FILE, Buffer.concat([iv, authTag, encrypted]));
     }
 
@@ -56,7 +56,7 @@ export class DIDManager {
         const decipher = crypto.createDecipheriv('aes-256-gcm', getCryptoKey(), iv);
         decipher.setAuthTag(authTag);
         const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-        
+
         const parsed = JSON.parse(decrypted.toString('utf8'));
         this.privateKeyJWK = parsed.private;
         this.publicKeyJWK = parsed.public;
