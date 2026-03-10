@@ -1,6 +1,7 @@
 {
   "name": "openclaw-identity-plugin",
   "version": "1.0.0",
+  "description": "An open-source identity verification and cryptographic signing plugin for OpenClaw autonomous AI agents.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -9,7 +10,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@types/node": "^25.4.0",
     "jose": "^6.2.1",
