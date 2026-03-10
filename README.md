@@ -57,4 +57,32 @@ Any client UI (Chat app, dashboard) interacting with OpenClaw can verify the sig
 See `src/verify-client.ts` for a reference implementation of how a client verifies an incoming agent action.
 
 ---
-*Built as a concept for the OpenClaw ecosystem.*
+
+## Using Without OpenClaw (Framework Agnostic)
+
+While this repository is packaged as an OpenClaw plugin, the core cryptographic identity modules are **100% framework agnostic**. You can drop them directly into LangChain, AutoGen, CrewAI, or any custom Python/TS agent script!
+
+Simply extract the core TypeScript files from the `src/` directory:
+1. `did.ts` - For generating and managing the agent's core Ed25519 `did:key`.
+2. `vc.ts` - For minting the W3C Verifiable Credential.
+3. `signer.ts` - For generating the JWS payload signatures.
+4. `delegation.ts` - For generating OBO (On-Behalf-Of) ephemeral sub-agent keys.
+
+```typescript
+import { DIDManager } from './did';
+import { ActionSigner } from './signer';
+
+// 1. Give your LangChain/AutoGen agent a true cryptographic anchor
+const didManager = new DIDManager();
+await didManager.initialize();
+
+// 2. Sign its actions before sending them to external tools
+const signer = new ActionSigner(didManager);
+const securePayload = await signer.signAction({ 
+    tool: "slack", 
+    message: "Hello World" 
+}, "tool:slack"); 
+```
+
+---
+*Built as a concept for the OpenClaw ecosystem, addressing enterprise AI identity gaps.*
