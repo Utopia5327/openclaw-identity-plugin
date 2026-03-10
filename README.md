@@ -13,7 +13,14 @@ As autonomous agents execute workflows on our behalf, humans need an auditable t
 
 ## Installation & Setup
 
-1. Install the plugin into your OpenClaw plugins directory.
+**Option 1: Quick Install (Recommended)**
+Run the automated installation script inside your OpenClaw plugins directory:
+```bash
+bash install.sh
+```
+
+**Option 2: Manual Install**
+1. Clone the repository into your OpenClaw plugins directory.
 ```bash
 npm install
 ```
