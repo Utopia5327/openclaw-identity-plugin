@@ -4,6 +4,14 @@ An open-source plugin for the [OpenClaw](https://openclaw.ai/) autonomous AI age
 
 This plugin solves the "trust and accountability" gap for autonomous agents by assigning them explicit identities, bound by verifiable boundaries, and capable of cryptographically signing their actions.
 
+## Why Build This?
+
+*   **Solve the Audit Trail Problem:** Standard agents share API keys, meaning audit logs look like the human user took the action. With this plugin, every API call can be cryptographically traced back to the specific AI agent instance.
+*   **Prevent Impersonation:** Just because an agent says `{"agent_id": 123}` doesn't mean it's actually them. This natively enforces JSON Web Signatures (JWS) for non-repudiation.
+*   **Advanced Delegation (OBO):** Support for On-Behalf-Of token exchanges. A primary agent can spawn an ephemeral sub-agent and issue it a mathematically linked Verifiable Credential.
+*   **Strict Scope Attenuation:** When delegating tasks to sub-agents, the primary agent restricts the sub-agent's authorization to a tiny slice of tools (e.g., `["tool:slack", "tool:jira"]`). Out-of-scope tasks are cryptographically denied.
+*   **Audience (`aud`) Strictness:** Payload signatures define explicit audiences, preventing an attacker from observing a signed Slack action and successfully replaying it against a Github endpoint.
+
 ## Overview
 As autonomous agents execute workflows on our behalf, humans need an auditable trail of *who* did *what*. This plugin extends OpenClaw's Persona (`SOUL.md`) with three core pillars:
 

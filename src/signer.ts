@@ -10,20 +10,30 @@ export class ActionSigner {
 
     /**
      * Signs any arbitrary JSON payload and returns a JWS string.
+     * @param payload The action data to sign.
+     * @param aud The intended Audience (e.g., 'tool:slack', 'agent:coordinator'). Mandatory to prevent replay attacks.
      */
-    public async signAction(payload: any): Promise<string> {
+    public async signAction(payload: any, aud: string): Promise<string> {
         if (!this.didManager.did) {
             throw new Error("DID Manager not initialized. Call initialize() first.");
         }
 
         const privateKey = await this.didManager.getSignerKey();
-        const payloadBytes = new TextEncoder().encode(JSON.stringify(payload));
+
+        // Inject the required aud claim directly into the signed payload wrapper
+        const securedPayload = {
+            ...payload,
+            aud: aud,
+            iat: Math.floor(Date.now() / 1000) // Issued at timestamp
+        };
+
+        const payloadBytes = new TextEncoder().encode(JSON.stringify(securedPayload));
 
         const jws = await new CompactSign(payloadBytes)
             .setProtectedHeader({ alg: 'EdDSA', kid: this.didManager.did })
             .sign(privateKey);
 
-        this.logAudit(payload, jws);
+        this.logAudit(securedPayload, jws);
 
         return jws;
     }
